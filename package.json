@@ -1,9 +1,11 @@
 {
   "name": "tour-service",
   "version": "1.0.0",
-  "description": "",
+  "description": "REST Api to provide tours",
   "main": "handler.js",
   "scripts": {
+    "build": "tsc",
+    "prepublish": "npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,6 +19,11 @@
   },
   "homepage": "https://github.com/DaIgeb/tour-service#readme",
   "dependencies": {
-    "aws-sdk": "^2.58.0"
+    "aws-sdk": "^2.58.0",
+    "uuid": "^3.0.1"
+  },
+  "devDependencies": {
+    "@types/uuid": "^2.0.29",
+    "typescript": "^2.3.3"
   }
 }
