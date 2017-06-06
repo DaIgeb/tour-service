@@ -1,16 +1,18 @@
-
 service: tour
 
 package:
   exclude:
     - src/**
-    - node_modules/**
+    - node_modules/@types
+    - node_modules/typescript
 
 provider:
   name: aws
   runtime: nodejs6.10
   environment:
     DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
+    STAGE: ${opt:stage, self:provider.stage}
+    COGNITO_POOL: eu-central-1_20qZMtjpi
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -29,37 +31,47 @@ functions:
     handler: lib/tours/create.create
     events:
       - http:
-          path: tours
+          path: /
           method: post
           cors: true
+          authorizer:
+            arn: arn:aws:cognito-idp:eu-central-1:271952345563:userpool/${self:provider.environment.COGNITO_POOL}
   list:
     handler: lib/tours/list.list
     events:
       - http:
-          path: tours
+          path: /
           method: get
           cors: true
+          authorizer:
+            arn: arn:aws:cognito-idp:eu-central-1:271952345563:userpool/${self:provider.environment.COGNITO_POOL}  
   get:
     handler: lib/tours/get.get
     events:
       - http:
-          path: tours/{id}
+          path: /{id}
           method: get
           cors: true
+          authorizer:
+            arn: arn:aws:cognito-idp:eu-central-1:271952345563:userpool/${self:provider.environment.COGNITO_POOL}
   update:
     handler: lib/tours/update.update
     events:
       - http:
-          path: tours/{id}
+          path: /{id}
           method: put
           cors: true
+          authorizer:
+            arn: arn:aws:cognito-idp:eu-central-1:271952345563:userpool/${self:provider.environment.COGNITO_POOL}
   delete:
-    handler: lib/tours/delete.delete
+    handler: lib/tours/delete.remove
     events:
       - http:
-          path: tours/{id}
+          path: /{id}
           method: delete
-          cors: true          
+          cors: true    
+          authorizer:
+            arn: arn:aws:cognito-idp:eu-central-1:271952345563:userpool/${self:provider.environment.COGNITO_POOL}
 
 resources:
   Resources:

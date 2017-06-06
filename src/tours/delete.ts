@@ -2,11 +2,13 @@
 
 import * as AWS from 'aws-sdk';
 
+import { tourTable } from './config'
+
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
-export const update = (event: LambdaEvent<{ id: string }>, context: Context, callback: LambdaCallback) => {
+export const remove = (event: LambdaEvent<{ id: string }>, context: Context, callback: LambdaCallback) => {
   const params = {
-    TableName: process.env.DYNAMODB_TABLE,
+    TableName: tourTable,
     Key: {
       id: event.pathParameters.id
     }

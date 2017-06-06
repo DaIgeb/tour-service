@@ -19,10 +19,14 @@
   },
   "homepage": "https://github.com/DaIgeb/tour-service#readme",
   "dependencies": {
+    "ajv": "^5.1.5",
     "aws-sdk": "^2.58.0",
+    "superagent": "^3.5.2",
     "uuid": "^3.0.1"
   },
   "devDependencies": {
+    "@types/ajv": "^1.0.0",
+    "@types/superagent": "^2.0.37",
     "@types/uuid": "^2.0.29",
     "typescript": "^2.3.3"
   }

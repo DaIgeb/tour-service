@@ -62,4 +62,18 @@ interface LambdaCallback {
 interface LambdaEvent<TPathParameters> {
   body: string;
   pathParameters?: TPathParameters;
+  headers: {
+    Authorization: string;
+  }
+  requestContext: {
+    stage: string;
+    authorizer: {
+      claims: {
+        email: string;
+        'cognito:username': string;
+        "cognito:groups": string;
+        iss: string;
+      }
+    }
+  }
 }

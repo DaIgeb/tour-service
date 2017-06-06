@@ -1,39 +1,43 @@
 'use strict';
 
-import * as uuid from 'uuid';
 import * as AWS from 'aws-sdk';
+
+import { Tour } from './Tour';
+import { isAuthenticated, isAuthorized } from './authorizer'
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 export const create = (event: LambdaEvent<{}>, context: Context, callback: LambdaCallback) => {
-  const timestamp = new Date().getTime();
-  const data = JSON.parse(event.body);
-  if (typeof data.text !== 'string') {
-    console.error('Validation Failed');
-    callback(new Error('Couldn\'t create the tour item.'));
+  if (!isAuthenticated(event.headers.Authorization, event.requestContext.authorizer.claims.iss)) {
+    const response = {
+      statusCode: 401,
+      body: JSON.stringify('Not authenticated')
+    }
+    callback(null, response);
+    return;
+  }
+  if (!isAuthorized(event.requestContext.authorizer.claims['cognito:groups'], 'tester')) {
+    const response = {
+      statusCode: 403,
+      body: JSON.stringify('Not authorized')
+    }
+    callback(null, response);
     return;
   }
 
-  const params = {
-    TableName: process.env.DYNAMODB_TABLE,
-    Item: {
-      id: uuid.v4(),
-      text: data.text,
-      createdAt: timestamp,
-      updatedAt: timestamp
-    }
-  };
-
-  dynamoDb.put(params, (error, result) => {
+  const tour = new Tour(dynamoDb, event.headers.Authorization, event.requestContext.authorizer.claims.email);
+  tour.create(JSON.parse(event.body), (error, result) => {
     if (error) {
       console.error(error);
       callback(new Error('Couldn\'t create the tour item.'));
       return;
     }
 
+    console.log('Create Result', result)
+
     const response = {
       statusCode: 200,
-      body: JSON.stringify(params.Item)
+      body: JSON.stringify(result)
     }
     callback(null, response);
   });
