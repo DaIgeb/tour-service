@@ -1,10 +1,7 @@
 service: tour
 
-package:
-  exclude:
-    - src/**
-    - node_modules/@types
-    - node_modules/typescript
+plugins:
+ - serverless-webpack
 
 provider:
   name: aws
@@ -13,6 +10,8 @@ provider:
     DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
     STAGE: ${opt:stage, self:provider.stage}
     COGNITO_POOL: eu-central-1_20qZMtjpi
+    AUTH0_CLIENT_ID: xVHE5rGaRQcoJ-NAwjv5cBXQeToVXkUC
+    AUTH0_CLIENT_SECRET: wtlJ-RuXS6TJ9hU2gsAsY69An2lfJi3bcNeC0P9DggP9QRMv-N9Ert60nqUf77jE
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -27,51 +26,48 @@ provider:
   region: eu-central-1
 
 functions:
+  auth:
+    handler: handler.auth
   create:
-    handler: lib/tours/create.create
+    handler: handler.create
     events:
       - http:
           path: /
           method: post
           cors: true
-          authorizer:
-            arn: arn:aws:cognito-idp:eu-central-1:271952345563:userpool/${self:provider.environment.COGNITO_POOL}
+          authorizer: auth
   list:
-    handler: lib/tours/list.list
+    handler: handler.list
     events:
       - http:
           path: /
           method: get
           cors: true
-          authorizer:
-            arn: arn:aws:cognito-idp:eu-central-1:271952345563:userpool/${self:provider.environment.COGNITO_POOL}  
+          authorizer: auth  
   get:
-    handler: lib/tours/get.get
+    handler: handler.get
     events:
       - http:
           path: /{id}
           method: get
           cors: true
-          authorizer:
-            arn: arn:aws:cognito-idp:eu-central-1:271952345563:userpool/${self:provider.environment.COGNITO_POOL}
+          authorizer: auth
   update:
-    handler: lib/tours/update.update
+    handler: handler.update
     events:
       - http:
           path: /{id}
           method: put
           cors: true
-          authorizer:
-            arn: arn:aws:cognito-idp:eu-central-1:271952345563:userpool/${self:provider.environment.COGNITO_POOL}
+          authorizer: auth
   delete:
-    handler: lib/tours/delete.remove
+    handler: handler.remove
     events:
       - http:
           path: /{id}
           method: delete
-          cors: true    
-          authorizer:
-            arn: arn:aws:cognito-idp:eu-central-1:271952345563:userpool/${self:provider.environment.COGNITO_POOL}
+          cors: true
+          authorizer: auth
 
 resources:
   Resources:

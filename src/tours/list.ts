@@ -2,22 +2,15 @@
 
 import * as AWS from 'aws-sdk';
 
-import { isAuthenticated } from './authorizer'
 import { Tour } from './Tour';
+import { isAuthorized } from './authorizer';
 
 const dynamoDb = new AWS.DynamoDB.DocumentClient();
 
 export const list = (event: LambdaEvent<{}>, context: Context, callback: LambdaCallback) => {
-  if (!isAuthenticated(event.headers.Authorization, event.requestContext.authorizer.claims.iss)) {
-    const response = {
-      statusCode: 401,
-      body: JSON.stringify('Not authenticated')
-    }
-    callback(null, response);
-    return;
-  }
-
-  const tour = new Tour(dynamoDb, event.headers.Authorization, event.requestContext.authorizer.claims.email);
+  console.log(event, context);
+  const isAdmin = true || isAuthorized(event.requestContext.authorizer.roles, 'Admin');
+  const tour = new Tour(dynamoDb, event.headers.Authorization, event.requestContext.authorizer.email);
   tour.list((error, result) => {
     if (error) {
       console.error(error);
@@ -25,10 +18,20 @@ export const list = (event: LambdaEvent<{}>, context: Context, callback: LambdaC
       return;
     }
 
-    const response = {
+    const response: HttpResponse = {
       statusCode: 200,
-      body: JSON.stringify(result)
+      headers: {
+        "Access-Control-Allow-Origin" : "*" 
+      },
+      body: JSON.stringify(isAdmin ? result : mapTours(result, event.requestContext.authorizer.personId))
     }
     callback(null, response);
   });
+}
+
+const mapTours = (tours: TTour[], personId: string) => {
+  return tours.map((t) => ({
+    ...t,
+    participants: t.participants.map((p: TIdParticipant, idx) => p.id !== personId ? ({ id: idx.toString() }) : p)
+  }))
 }

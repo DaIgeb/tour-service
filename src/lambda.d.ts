@@ -55,8 +55,16 @@ interface ClientContextEnv {
   locale: string;
 }
 
+interface HttpResponse {
+  statusCode: number;
+  headers: {
+    "Access-Control-Allow-Origin": "*"
+  };
+  body: string;
+}
+
 interface LambdaCallback {
-  (error: any, result?: any): void;
+  (error: any, result?: HttpResponse | Policy): void;
 }
 
 interface LambdaEvent<TPathParameters> {
@@ -65,15 +73,37 @@ interface LambdaEvent<TPathParameters> {
   headers: {
     Authorization: string;
   }
+  methodArn?: string;
+  authorizationToken?: string;
   requestContext: {
     stage: string;
     authorizer: {
-      claims: {
-        email: string;
-        'cognito:username': string;
-        "cognito:groups": string;
-        iss: string;
-      }
+      roles: string;
+      principalId: string;
+      email: string;
+      personId: string;
     }
   }
+}
+
+interface Policy {
+  principalId: string;
+  policyDocument?: PolicyDocument;
+  context?: {
+    email: string;
+    roles: string;
+    personId: string;
+  }
+}
+
+interface PolicyDocument {
+  Version: string;
+  Statement: PolicyDocumentStatement[];
+}
+
+interface PolicyDocumentStatement {
+  Action: string;
+  Effect: string;
+  Resource: string;
+
 }

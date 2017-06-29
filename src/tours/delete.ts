@@ -21,8 +21,11 @@ export const remove = (event: LambdaEvent<{ id: string }>, context: Context, cal
       return;
     }
 
-    const response = {
+    const response: HttpResponse = {
       statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin" : "*" 
+      },
       body: JSON.stringify({})
     }
     callback(null, response);
