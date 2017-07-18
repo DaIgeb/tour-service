@@ -9,9 +9,8 @@ provider:
   environment:
     DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
     STAGE: ${opt:stage, self:provider.stage}
-    COGNITO_POOL: eu-central-1_20qZMtjpi
-    AUTH0_CLIENT_ID: xVHE5rGaRQcoJ-NAwjv5cBXQeToVXkUC
-    AUTH0_CLIENT_SECRET: wtlJ-RuXS6TJ9hU2gsAsY69An2lfJi3bcNeC0P9DggP9QRMv-N9Ert60nqUf77jE
+    AUTH0_CLIENT_ID: ${file(./secrets.yml):AUTH0_CLIENT_ID}
+    AUTH0_CLIENT_SECRET: ${file(./secrets.yml):AUTH0_CLIENT_SECRET}
   iamRoleStatements:
     - Effect: Allow
       Action:
