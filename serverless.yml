@@ -1,7 +1,7 @@
 service: tour
 
 plugins:
- - serverless-webpack
+  - serverless-webpack
 
 provider:
   name: aws
@@ -26,9 +26,9 @@ provider:
 
 functions:
   auth:
-    handler: handler.auth
+    handler: src/handler.auth
   create:
-    handler: handler.create
+    handler: src/handler.create
     events:
       - http:
           path: /
@@ -36,7 +36,7 @@ functions:
           cors: true
           authorizer: auth
   list:
-    handler: handler.list
+    handler: src/handler.list
     events:
       - http:
           path: /
@@ -44,7 +44,7 @@ functions:
           cors: true
           authorizer: auth  
   get:
-    handler: handler.get
+    handler: src/handler.get
     events:
       - http:
           path: /{id}
@@ -52,7 +52,7 @@ functions:
           cors: true
           authorizer: auth
   update:
-    handler: handler.update
+    handler: src/handler.update
     events:
       - http:
           path: /{id}
@@ -60,7 +60,7 @@ functions:
           cors: true
           authorizer: auth
   delete:
-    handler: handler.remove
+    handler: src/handler.remove
     events:
       - http:
           path: /{id}

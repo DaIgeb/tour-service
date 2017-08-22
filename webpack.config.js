@@ -1,5 +1,5 @@
 var path = require('path');
-
+const slsw = require('serverless-webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 // Helper functions
@@ -11,25 +11,23 @@ function root(args) {
 }
 
 module.exports = {
-  entry: './src/handler.ts',
+  entry: slsw.lib.entries,
   target: 'node',
-  externals: [ "aws-sdk", "formidable" ], // modules to be excluded from bundled file
+  externals: ["aws-sdk", "formidable"], // modules to be excluded from bundled file
   resolve: {
-    extensions: ['', '.ts', '.js', '.json'],
-
-    // Make sure root is src
-    root: root('src'),
-
-    // remove other default values
-    modulesDirectories: ['node_modules']
+    extensions: ['.ts', '.js', '.json'],
+    modules:  [
+      root('src'),
+      'node_modules'
+    ]
   },
   output: {
     libraryTarget: 'commonjs',
     path: path.join(__dirname, '.webpack'),
-    filename: 'handler.js'
+    filename: '[name].js'
   },
   module: {
-    preLoaders: [
+    rules: [
       {
         test: /\.ts$/,
         loader: 'string-replace-loader',
@@ -38,10 +36,9 @@ module.exports = {
           replace: '$1.import($3).then(mod => mod.__esModule ? mod.default : mod)',
           flags: 'g'
         },
+        enforce: "pre",
         include: [root('src')]
-      }
-    ],
-    loaders: [
+      },
       {
         test: /\.ts$/,
         loaders: [

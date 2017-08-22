@@ -8,3 +8,4 @@ jspm_packages
 secrets.yml
 
 dist
+lib
