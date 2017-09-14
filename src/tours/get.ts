@@ -10,7 +10,7 @@ export const apiUrl = 'https://api.aws.daigeb.ch';
 
 export const get = (event: LambdaEvent<{ id: string }>, context: Context, callback: LambdaCallback) => {
   console.log(event, context);
-  const tour = new Tour(dynamoDb, event.headers.Authorization, event.requestContext.authorizer.email);
+  const tour = new Tour(dynamoDb, event.requestContext.authorizer.email);
 
   tour.get(event.pathParameters.id, (error, tour) => {
     if (error) {

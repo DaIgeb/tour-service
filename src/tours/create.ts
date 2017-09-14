@@ -20,7 +20,7 @@ export const create = (event: LambdaEvent<{}>, context: Context, callback: Lambd
     return;
   }
 
-  const tour = new Tour(dynamoDb, event.headers.Authorization, event.requestContext.authorizer.email);
+  const tour = new Tour(dynamoDb, event.requestContext.authorizer.email);
   tour.create(JSON.parse(event.body), (error, result) => {
     if (error) {
       console.error(error);

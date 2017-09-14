@@ -20,7 +20,7 @@ export const update = (event: LambdaEvent<{ id: string }>, context: Context, cal
     return;
   }
 
-  const tour = new Tour(dynamoDb, event.headers.Authorization, event.requestContext.authorizer.email);
+  const tour = new Tour(dynamoDb, event.requestContext.authorizer.email);
   tour.update(event.pathParameters.id, JSON.parse(event.body), (error, result) => {
     if (error) {
       console.error(error);

@@ -14,7 +14,7 @@ const schema = {
       }
     }
   },
-  "required": ["name", "points", "date"],
+  "required": ["route", "points", "date"],
   "additionalProperties": false
 };
 
@@ -24,7 +24,7 @@ var validator = ajv.compile(schema);
 export const validate = (obj: any): obj is TTour => {
   var valid = validator(obj);
   if (!valid) {
-    console.log(validator.errors);
+    console.error(validator.errors);
 
     return false;
   }
