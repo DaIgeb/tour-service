@@ -2,38 +2,19 @@ import * as Ajv from 'ajv';
 
 const schema = {
   "properties": {
-    "name": { "type": "string", "minLength": 3 },
+    "route": { "type": "string", "format": "uuid" },
+    "date": { "type": "string", "format": "date" },
     "points": { "enum": [15, 20, 40, 80, 150] },
-    "elevation": { "type": "integer", "minimum": 0 },
-    "distance": { "type": "integer", "minimum": 0 },
     "participants": {
       "type": "array",
       "items": {
         "title": "Participant",
         "description": "Participant connection schema",
-        "type": "object",
-        "oneOf": [
-          {
-            "properties": {
-              "id": { "type": "string", "format": "uuid" }
-            },
-            "required": ["id"],
-            "additionalProperties": false
-          },
-          {
-            "properties": {
-              "firstName": { "type": "string", "minLength": 3, "maxLength": 128 },
-              "lastName": { "type": "string", "minLength": 3, "maxLength": 128 },
-              "email": { "type": "string", "format": "email" },
-            },
-            "required": ["firstName", "lastName", "email"],
-            "additionalProperties": false
-          }
-        ],
+        "type": "string"
       }
     }
   },
-  "required": ["name", "points"],
+  "required": ["name", "points", "date"],
   "additionalProperties": false
 };
 
